@@ -7,7 +7,7 @@ from webhelpers2.html.builder import HTML
 from pyramid.httpexceptions import HTTPBadRequest
 
 
-log = logging.getLogger('uniform.validation')
+log = logging.getLogger('pyramid_uniform.validate')
 
 csrf_field = "_authentication_token"
 
