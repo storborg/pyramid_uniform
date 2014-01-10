@@ -41,7 +41,7 @@ class TestForm(TestCase):
     def test_invalid_non_error_dict(self):
         request = DummyRequest(post={'what': ''})
         form = Form(request, DummySchema())
-        with self.assertRaises(Invalid) as cm:
+        with self.assertRaises(Invalid):
             form.validate(skip_csrf=True)
 
     def test_validate_csrf(self):
@@ -136,5 +136,3 @@ class TestForm(TestCase):
         form = Form(request, DummySchema())
         with self.assertRaises(HTTPBadRequest):
             form.validate_csrf()
-
-
