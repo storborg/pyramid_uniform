@@ -208,8 +208,11 @@ class Renderer(object):
                            **attrs)
 
     def select(self, name, options, selected_value=None, id=None, **attrs):
+        val = self.value(name, selected_value)
+        if not isinstance(val, list):
+            val = [val]
         return tags.select(name,
-                           self.value(name, selected_value),
+                           val,
                            options,
                            self._get_id(id, name),
                            **attrs)
