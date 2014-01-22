@@ -2,11 +2,9 @@ from unittest import TestCase
 
 from pyramid.testing import DummyRequest
 
-from .. import (Form, FormRenderer,
-                FormNotValidatedError, FormInvalid,
-                csrf_field)
+from .. import Form, FormRenderer, csrf_field
 
-from .utils import DummySchema, DummyObject, dummy_csrf_token
+from .utils import DummySchema, dummy_csrf_token
 
 
 class TestRenderer(TestCase):
@@ -55,26 +53,36 @@ class TestRenderer(TestCase):
     def test_file(self):
         renderer = self._make_renderer()
         tag = renderer.file('hello')
-        self.assertIn('<input', tag)
-        # XXX
+        self.assertEqual(tag,
+                         '<input id="hello" name="hello" type="file" />')
 
     def test_hidden(self):
         renderer = self._make_renderer()
         tag = renderer.hidden('hello')
-        self.assertIn('<input', tag)
-        # XXX
+        self.assertEqual(tag,
+                         '<input id="hello" name="hello" type="hidden" />')
 
     def test_radio(self):
         renderer = self._make_renderer()
-        tag = renderer.radio('hello')
-        self.assertIn('<input', tag)
-        # XXX
+        tag = renderer.radio('hello', 'a')
+        self.assertEqual(
+            tag,
+            '<input id="hello_a" name="hello" type="radio" value="a" />')
+
+    def test_radio_selected(self):
+        renderer = self._make_renderer()
+        tag = renderer.radio('hello', 'b', checked=True)
+        self.assertEqual(
+            tag,
+            '<input checked="checked" id="hello_b" '
+            'name="hello" type="radio" value="b" />')
 
     def test_submit(self):
         renderer = self._make_renderer()
         tag = renderer.submit('hello')
-        self.assertIn('<input', tag)
-        # XXX
+        self.assertEqual(
+            tag,
+            '<input id="hello" name="hello" type="submit" />')
 
     def test_select(self):
         renderer = self._make_renderer()
@@ -82,20 +90,52 @@ class TestRenderer(TestCase):
         self.assertIn('<select', tag)
         # XXX
 
+    def test_select_scalar_selected(self):
+        renderer = self._make_renderer()
+        tag = renderer.select('hello', [('a', 12), ('b', 24)], 'a')
+        self.assertIn('<select', tag)
+        # XXX
+
+    def test_select_multiple(self):
+        renderer = self._make_renderer()
+        tag = renderer.select('hello', [('a', 12), ('b', 24)], 'a')
+        self.assertIn('<select', tag)
+        # XXX
+
+    def test_select_list_selected(self):
+        renderer = self._make_renderer()
+        tag = renderer.select('hello', [('a', 12), ('b', 24)], ['a', 'b'])
+        self.assertIn('<select', tag)
+        # XXX
+
     def test_checkbox(self):
         renderer = self._make_renderer()
         tag = renderer.checkbox('hello')
-        # XXX
+        self.assertEqual(
+            tag,
+            '<input id="hello" name="hello" type="checkbox" value="1" />')
+
+    def test_checkbox_checked(self):
+        renderer = self._make_renderer()
+        tag = renderer.checkbox('hello', checked=True)
+        self.assertEqual(
+            tag,
+            '<input checked="checked" id="hello" '
+            'name="hello" type="checkbox" value="1" />')
 
     def test_textarea(self):
         renderer = self._make_renderer()
         tag = renderer.textarea('hello')
-        # XXX
+        self.assertEqual(
+            tag,
+            '<textarea id="hello" name="hello"></textarea>')
 
     def test_password(self):
         renderer = self._make_renderer()
         tag = renderer.password('hello')
-        # XXX
+        self.assertEqual(
+            tag,
+            '<input id="hello" name="hello" type="password" />')
 
     def test_is_error(self):
         renderer = self._make_renderer('')
@@ -136,6 +176,7 @@ class TestRenderer(TestCase):
         self.assertIn('<input', tag)
         self.assertIn('<div', tag)
         self.assertIn(dummy_csrf_token, tag)
+        self.assertIn(csrf_field, tag)
 
     def test_explicit_id(self):
         renderer = self._make_renderer()
