@@ -22,10 +22,17 @@ class FormError(Exception):
 
 
 class FormNotValidatedError(FormError):
+    """
+    Raised when form data is used before form has been validated: for example,
+    when ``form.bind()`` is called.
+    """
     message = 'Form has not been validated; call validate() first'
 
 
 class FormInvalid(FormError):
+    """
+    Raised when form data is used but the form is not valid.
+    """
     message = 'Form is invalid'
 
 
