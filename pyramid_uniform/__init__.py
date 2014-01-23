@@ -207,7 +207,7 @@ class Renderer(object):
                            self._get_id(id, name),
                            **attrs)
 
-    def select(self, name, options, selected_value=None, id=None, **attrs):
+    def select(self, name, selected_value, options, id=None, **attrs):
         val = self.value(name, selected_value)
         if not isinstance(val, list):
             val = [val]

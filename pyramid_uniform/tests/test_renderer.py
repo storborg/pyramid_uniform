@@ -86,27 +86,42 @@ class TestRenderer(TestCase):
 
     def test_select(self):
         renderer = self._make_renderer()
-        tag = renderer.select('hello', [('a', 12), ('b', 24)], None)
-        self.assertIn('<select', tag)
-        # XXX
+        tag = renderer.select('hello', None, [('a', 12), ('b', 24)])
+        self.assertEqual(tag,
+            '<select id="hello" name="hello">\n'
+            '<option value="a">12</option>\n'
+            '<option value="b">24</option>\n'
+            '</select>')
 
     def test_select_scalar_selected(self):
         renderer = self._make_renderer()
-        tag = renderer.select('hello', [('a', 12), ('b', 24)], 'a')
-        self.assertIn('<select', tag)
-        # XXX
+        tag = renderer.select('hello', 'a', [('a', 12), ('b', 24)])
+        self.assertEqual(
+            tag,
+            '<select id="hello" name="hello">\n'
+            '<option selected="selected" value="a">12</option>\n'
+            '<option value="b">24</option>\n'
+            '</select>')
 
     def test_select_multiple(self):
         renderer = self._make_renderer()
-        tag = renderer.select('hello', [('a', 12), ('b', 24)], 'a')
-        self.assertIn('<select', tag)
-        # XXX
+        tag = renderer.select('hello', 'a', [('a', 12), ('b', 24)])
+        self.assertEqual(
+            tag,
+            '<select id="hello" name="hello">\n'
+            '<option selected="selected" value="a">12</option>\n'
+            '<option value="b">24</option>\n'
+            '</select>')
 
     def test_select_list_selected(self):
         renderer = self._make_renderer()
-        tag = renderer.select('hello', [('a', 12), ('b', 24)], ['a', 'b'])
-        self.assertIn('<select', tag)
-        # XXX
+        tag = renderer.select('hello', ['a', 'b'], [('a', 12), ('b', 24)])
+        self.assertEqual(
+            tag,
+            '<select id="hello" name="hello">\n'
+            '<option selected="selected" value="a">12</option>\n'
+            '<option selected="selected" value="b">24</option>\n'
+            '</select>')
 
     def test_checkbox(self):
         renderer = self._make_renderer()
