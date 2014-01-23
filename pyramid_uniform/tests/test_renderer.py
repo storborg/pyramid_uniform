@@ -87,7 +87,8 @@ class TestRenderer(TestCase):
     def test_select(self):
         renderer = self._make_renderer()
         tag = renderer.select('hello', None, [('a', 12), ('b', 24)])
-        self.assertEqual(tag,
+        self.assertEqual(
+            tag,
             '<select id="hello" name="hello">\n'
             '<option value="a">12</option>\n'
             '<option value="b">24</option>\n'
