@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name='pyramid_uniform',
-      version='0.1',
+      version='0.2',
       description='Form handling for Pyramid.',
       long_description='',
       classifiers=[
