@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(name='pyramid_uniform',
@@ -29,7 +29,7 @@ setup(name='pyramid_uniform',
           'nose-cover3',
       ],
       license='MIT',
-      packages=['pyramid_uniform'],
+      packages=find_packages(),
       test_suite='nose.collector',
       tests_require=['nose'],
       include_package_data=True,
