@@ -241,7 +241,7 @@ class Renderer(object):
         checked = self.value(name) == value or checked
         return tags.radio(name, value, checked, label, **attrs)
 
-    def submit(self, name, value=None, id=None, **attrs):
+    def submit(self, name=None, value=None, id=None, **attrs):
         """
         Return a submit button tag.
         """
