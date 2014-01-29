@@ -46,7 +46,10 @@ class State(object):
 
 
 class Form(object):
-
+    """
+    Represents a set of fields (GET or POST parameters) to be validated using a
+    ``FormEncode`` schema.
+    """
     def __init__(self, request, schema, method='POST'):
         self.request = request
         self.schema = schema
@@ -61,7 +64,8 @@ class Form(object):
 
     @property
     def method_allowed(self):
-        """Is the method that was used to submit this form allowed?.
+        """
+        Is the method that was used to submit this form allowed?
 
         If this form doesn't have a request method set (i.e., if it was
         explicitly set to ``None``), any method is valid. Otherwise, the
@@ -74,7 +78,8 @@ class Form(object):
         return True
 
     def validate(self, skip_csrf=False, assert_valid=False):
-        """Validate a form submission.
+        """
+        Validate a form submission.
 
         When ``assert_valid`` is ``False`` (the default), a bool will be
         returned to indicate whether the form was valid. (Note: this isn't
@@ -82,10 +87,8 @@ class Form(object):
         immediate ``400 Bad Request`` response).
 
         When ``assert_valid`` is ``True``, certain conditions will be
-        ``assert``ed. When an assertion fails, the resulting
-        ``AssertionError`` will cause an internal server error, which will
-        in turn cause an error email to be sent out.
-
+        asserted. When an assertion fails, an ``AssertionError`` will be
+        raised.
         """
         request = self.request
         if self.is_validated:
@@ -138,9 +141,16 @@ class Form(object):
         return valid
 
     def assert_valid(self, **kw):
+        """
+        Assert that this form is valid, the request method is appropriate, and
+        the CSRF check passes (unless it is explicitly skipped).
+        """
         self.validate(assert_valid=True, **kw)
 
     def validate_csrf(self, params=None):
+        """
+        Validate that the CSRF token is correct.
+        """
         if params is None:
             params = self._get_params()
         if csrf_field not in params:
@@ -158,6 +168,11 @@ class Form(object):
             return self.request.params
 
     def bind(self, obj):
+        """
+        Bind the data from this form to an object: that is, try to set
+        attributes on the client corresponding to the keys present in the
+        validated data.
+        """
         if not self.is_validated:
             raise FormNotValidated
         if self.errors:
@@ -168,12 +183,18 @@ class Form(object):
         return obj
 
     def errors_for(self, field):
+        """
+        Return a list of errors for the given field.
+        """
         errors = self.errors.get(field, [])
         if isinstance(errors, six.string_types):
             errors = [errors]
         return errors
 
     def is_error(self, field):
+        """
+        Check if the given field has any validation errors.
+        """
         return field in self.errors
 
 
@@ -184,18 +205,27 @@ class Renderer(object):
         self.id_prefix = id_prefix
 
     def text(self, name, value=None, id=None, **attrs):
+        """
+        Return a ``text`` input tag.
+        """
         return tags.text(name,
                          self.value(name, value),
                          self._get_id(id, name),
                          **attrs)
 
     def file(self, name, value=None, id=None, **attrs):
+        """
+        Return a ``file`` input tag.
+        """
         return tags.file(name,
                          self.value(name, value),
                          self._get_id(id, name),
                          **attrs)
 
     def hidden(self, name, value=None, id=None, **attrs):
+        """
+        Return a ``hidden`` input tag.
+        """
         if value is None:
             value = self.value(name)
 
@@ -205,16 +235,25 @@ class Renderer(object):
                            **attrs)
 
     def radio(self, name, value=None, checked=False, label=None, **attrs):
+        """
+        Return a radio button tag.
+        """
         checked = self.value(name) == value or checked
         return tags.radio(name, value, checked, label, **attrs)
 
     def submit(self, name, value=None, id=None, **attrs):
+        """
+        Return a submit button tag.
+        """
         return tags.submit(name,
                            self.value(name, value),
                            self._get_id(id, name),
                            **attrs)
 
     def select(self, name, selected_values, options, id=None, **attrs):
+        """
+        Return a select tag.
+        """
         val = self.value(name, selected_values)
         if not isinstance(val, list):
             val = [val]
@@ -226,6 +265,9 @@ class Renderer(object):
 
     def checkbox(self, name, value="1", checked=False, label=None, id=None,
                  **attrs):
+        """
+        Return a checkbox tag.
+        """
         return tags.checkbox(name,
                              value,
                              self.value(name, checked),
@@ -234,23 +276,38 @@ class Renderer(object):
                              **attrs)
 
     def textarea(self, name, content="", id=None, **attrs):
+        """
+        Return a textarea tag.
+        """
         return tags.textarea(name,
                              self.value(name, content),
                              self._get_id(id, name),
                              **attrs)
 
     def password(self, name, value=None, id=None, **attrs):
+        """
+        Return a password input tag.
+        """
         return tags.password(name, self.value(name, value),
                              self._get_id(id, name),
                              **attrs)
 
     def is_error(self, name):
+        """
+        Check if the given field has any validation errors.
+        """
         return name in self.errors
 
     def errors_for(self, name):
+        """
+        Return a list of errors for the given field.
+        """
         return self.form.errors_for(name)
 
     def errorlist(self, name):
+        """
+        Return a list of errors for the given field as a ``ul`` tag.
+        """
         errors = self.errors_for(name)
 
         if not errors:
@@ -260,6 +317,9 @@ class Renderer(object):
         return HTML.tag("ul", tags.literal(content), class_='error')
 
     def value(self, name, default=None):
+        """
+        Return the value for the given field as supplied to the form.
+        """
         return self.data.get(name, default)
 
     def _get_id(self, id, name):
@@ -271,6 +331,9 @@ class Renderer(object):
 
 
 class FormRenderer(Renderer):
+    """
+    Wraps a form to provide HTML rendering capability.
+    """
     def __init__(self, form, csrf_field=csrf_field, id_prefix=None):
         self.form = form
         self.csrf_field = csrf_field
@@ -278,18 +341,32 @@ class FormRenderer(Renderer):
         Renderer.__init__(self, form.data, form.errors, id_prefix)
 
     def begin(self, url=None, **attrs):
+        """
+        Return a ``form`` opening tag.
+        """
         url = url or self.form.request.path
         multipart = attrs.pop('multipart', self.form.multipart)
         return tags.form(url, multipart=multipart, **attrs)
 
     def end(self):
+        """
+        Return a ``form`` closing tag.
+        """
         return tags.end_form()
 
     def csrf(self, name=None):
+        """
+        Return a bare hidden input field containing the CSRF token and param
+        name.
+        """
         name = name or self.csrf_field
 
         token = self.form.request.session.get_csrf_token()
         return self.hidden(name, value=token)
 
     def csrf_token(self, name=None):
+        """
+        Return a hidden field containing the CSRF token, wrapped in an
+        invisible div, so that it is valid HTML regardless of context.
+        """
         return HTML.tag('div', self.csrf(name), style='display:none;')
