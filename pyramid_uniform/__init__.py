@@ -24,7 +24,7 @@ class FormError(Exception):
 class FormNotValidated(FormError):
     """
     Raised when form data is used before form has been validated: for example,
-    when ``form.bind()`` is called.
+    when :py:meth:`.Form.bind` is called.
     """
     message = 'Form has not been validated; call validate() first'
 
@@ -38,8 +38,8 @@ class FormInvalid(FormError):
 
 class State(object):
     """
-    A relatively simple state object for FormEncode to use, with a reference to
-    the request being validated.
+    A relatively simple state object for the schema being validated to use,
+    with a reference to the request being validated.
     """
     def __init__(self, request):
         self.request = request
@@ -48,7 +48,16 @@ class State(object):
 class Form(object):
     """
     Represents a set of fields (GET or POST parameters) to be validated using a
-    ``FormEncode`` schema.
+    :py:mod:`FormEncode` schema.
+
+    :param request: The web request containing data to be validated
+    :type request: :py:class:`WebOb.Request`
+
+    :param schema: The schema to validate against
+    :type schema: :py:class:`FormEncode.Schema`
+
+    :param method: HTTP request method that this form expects: GET or POST
+    :type method: str
     """
     def __init__(self, request, schema, method='POST'):
         self.request = request
@@ -82,7 +91,6 @@ class Form(object):
         explicitly set to ``None``), any method is valid. Otherwise, the
         method of the form submission must match the method required by this
         form.
-
         """
         if self.method:
             return self.request.method == self.method
@@ -100,6 +108,13 @@ class Form(object):
         When ``assert_valid`` is ``True``, certain conditions will be
         asserted. When an assertion fails, an ``AssertionError`` will be
         raised.
+
+        :param skip_csrf: if True, bypass the CSRF check
+        :type skip_csrf: bool
+
+        :param assert_valid:
+            if True, assert validity instead of returning status
+        :type assert_valid: bool
         """
         request = self.request
         if self.is_validated:
