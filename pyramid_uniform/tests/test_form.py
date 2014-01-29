@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.testing import DummyRequest
 
 from .. import (Form,
-                FormNotValidatedError, FormInvalid,
+                FormNotValidated, FormInvalid,
                 csrf_field)
 
 from .utils import DummySchema, DummyObject, dummy_csrf_token
@@ -79,7 +79,7 @@ class TestForm(TestCase):
         form = Form(request, DummySchema())
 
         obj = DummyObject()
-        with self.assertRaises(FormNotValidatedError):
+        with self.assertRaises(FormNotValidated):
             form.bind(obj)
 
     def test_bind_invalid(self):

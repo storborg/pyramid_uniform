@@ -21,7 +21,7 @@ class FormError(Exception):
         Exception.__init__(self, *args, **kw)
 
 
-class FormNotValidatedError(FormError):
+class FormNotValidated(FormError):
     """
     Raised when form data is used before form has been validated: for example,
     when ``form.bind()`` is called.
@@ -159,7 +159,7 @@ class Form(object):
 
     def bind(self, obj):
         if not self.is_validated:
-            raise FormNotValidatedError
+            raise FormNotValidated
         if self.errors:
             raise FormInvalid('Form not valid; cannot bind')
         items = [(k, v) for k, v in self.data.items() if not k.startswith('_')]
