@@ -91,6 +91,13 @@ class TestForm(TestCase):
         with self.assertRaises(FormInvalid):
             form.bind(obj)
 
+    def test_access_data_without_validating(self):
+        request = DummyRequest(post={'foo': 'quux'})
+        form = Form(request, DummySchema())
+
+        with self.assertRaises(FormNotValidated):
+            form.data
+
     def test_errors_for(self):
         request = DummyRequest(post={'foo': ''})
         form = Form(request, DummySchema())

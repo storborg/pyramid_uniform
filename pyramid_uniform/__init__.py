@@ -59,8 +59,19 @@ class Form(object):
         self.multipart = True
         self.is_validated = False
         self.errors = {}
-        self.data = {}
         self.state = State(request)
+
+    @property
+    def data(self):
+        """
+        Once the form has been validated, contains the results of that
+        validation as a dict.
+
+        :raises FormNotValidated: if the form has not yet been validated
+        """
+        if self.is_validated:
+            return self._data
+        raise FormNotValidated
 
     @property
     def method_allowed(self):
@@ -110,10 +121,10 @@ class Form(object):
             params = params.copy()
             params.pop(csrf_field)
 
-        self.data.update(params)
+        self._data = params
 
         try:
-            self.data = self.schema.to_python(params, self.state)
+            self._data = self.schema.to_python(params, self.state)
         except Invalid as e:
             if e.error_dict:
                 self.errors = e.unpack_errors(
