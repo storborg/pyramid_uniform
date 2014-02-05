@@ -206,3 +206,12 @@ class TestRenderer(TestCase):
         renderer = FormRenderer(form, id_prefix='blorg-')
         tag = renderer.text('foo')
         self.assertIn('id="blorg-foo"', tag)
+
+    def test_renderer_unvalidated_form(self):
+        request = DummyRequest()
+        form = Form(request, DummySchema())
+        renderer = FormRenderer(form)
+        tag = renderer.text('hello')
+        self.assertEqual(
+            tag,
+            '<input id="hello" name="hello" type="text" />')

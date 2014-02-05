@@ -364,7 +364,11 @@ class FormRenderer(Renderer):
         self.form = form
         self.csrf_field = csrf_field
 
-        Renderer.__init__(self, form.data, form.errors, id_prefix)
+        try:
+            data = form.data
+        except FormNotValidated:
+            data = {}
+        Renderer.__init__(self, data, form.errors, id_prefix)
 
     def begin(self, url=None, **attrs):
         """
