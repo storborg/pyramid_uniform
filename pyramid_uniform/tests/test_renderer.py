@@ -229,4 +229,4 @@ class TestRenderer(TestCase):
         renderer = FormRenderer(form, name_prefix='partial.')
         tag = renderer.text('foo')
         self.assertIn('name="partial.foo"', tag)
-        self.assertIn('id="partial.foo', tag)
+        self.assertIn('id="partial_foo', tag)

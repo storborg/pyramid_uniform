@@ -366,6 +366,8 @@ class Renderer(object):
             id = name
             if self.id_prefix:
                 id = self.id_prefix + id
+        id = id.replace('.', '_')
+        id = tags._make_safe_id_component(id)
         return id
 
     def _get_name(self, name):
