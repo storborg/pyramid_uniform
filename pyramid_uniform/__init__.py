@@ -1,7 +1,9 @@
 import logging
 
 import six
+
 from formencode import Invalid
+
 from webhelpers2.html import tags
 from webhelpers2.html.builder import HTML
 from pyramid.httpexceptions import HTTPBadRequest
@@ -197,15 +199,34 @@ class Form(object):
         """
         Bind the data from this form to an object: that is, try to set
         attributes on the client corresponding to the keys present in the
-        validated data.
+        validated data. The object can be a template object, SQLAlchemy object,
+        etc.
+
+        If any value in the data is a list or another dictionary, recurse with
+        that key.
+
+        Private attributes, which is anything that is prefixed with ``_``, will
+        be skipped.
+
+        Once done, return the object.
         """
         if not self.is_validated:
             raise FormNotValidated
         if self.errors:
             raise FormInvalid('Form not valid; cannot bind')
-        items = [(k, v) for k, v in self.data.items() if not k.startswith('_')]
-        for k, v in items:
-            setattr(obj, k, v)
+
+        def crud_update(obj, params):
+            for k, v in params.items():
+                if not k.startswith('_'):
+                    if type(v) == list:
+                        for ii, el in enumerate(v):
+                            crud_update(getattr(obj, k)[ii], el)
+                    elif type(v) == dict:
+                        crud_update(getattr(obj, k), v)
+                    else:
+                        setattr(obj, k, v)
+
+        crud_update(obj, self.data)
         return obj
 
     def errors_for(self, field):

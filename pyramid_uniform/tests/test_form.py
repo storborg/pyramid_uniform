@@ -8,7 +8,8 @@ from .. import (Form,
                 FormNotValidated, FormInvalid,
                 csrf_field)
 
-from .utils import DummySchema, DummyObject, dummy_csrf_token
+from .utils import (DummySchema, LooseDummySchema, NestedDummySchema,
+                    DummyObject, dummy_csrf_token)
 
 
 class TestForm(TestCase):
@@ -90,6 +91,39 @@ class TestForm(TestCase):
         obj = DummyObject()
         with self.assertRaises(FormInvalid):
             form.bind(obj)
+
+    def test_bind_ignores_private_attributes(self):
+        request = DummyRequest(post={
+            'foo': 'frobozz',
+            '_something': 'blah',
+        })
+        form = Form(request, LooseDummySchema())
+        self.assertTrue(form.validate(skip_csrf=True))
+
+        obj = DummyObject()
+        form.bind(obj)
+        self.assertEqual(obj.foo, 'frobozz')
+        self.assertFalse(hasattr(obj, '_something'))
+
+    def test_bind_nested(self):
+        request = DummyRequest(post={
+            'name': 'ben bitdiddle',
+            'qty': '10',
+            'items-0.foo': 'blah blah blah',
+            'subfields.foo': 'hello',
+        })
+        form = Form(request, NestedDummySchema())
+        self.assertTrue(form.validate(skip_csrf=True))
+
+        obj = DummyObject()
+        obj.items = [DummyObject(), DummyObject()]
+        obj.subfields = DummyObject()
+
+        form.bind(obj)
+        self.assertEqual(obj.items[0].foo, 'blah blah blah')
+        self.assertEqual(obj.subfields.foo, 'hello')
+        self.assertEqual(obj.qty, 10)
+        self.assertEqual(obj.name, 'ben bitdiddle')
 
     def test_access_data_without_validating(self):
         request = DummyRequest(post={'foo': 'quux'})
