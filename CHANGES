@@ -1,6 +1,20 @@
 Uniform Changelog
 =================
 
+Version 0.3
+-----------
+
+- **Breaking API Change** - Integrated CSRF token rendering with default form
+  generation. CSRF is now used on all forms by default, and you have to
+  explicitly disable it if you don't want it.
+- Add support for nested data structures in ``form.bind()``.
+
+
+Version 0.2
+-----------
+
+- Variety of bugfixes, Python 3 support.
+
 
 Version 0.1
 -----------

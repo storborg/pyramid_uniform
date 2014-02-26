@@ -173,6 +173,22 @@ class TestRenderer(TestCase):
         renderer = self._make_renderer()
         tag = renderer.begin()
         self.assertIn('<form', tag)
+        self.assertIn(dummy_csrf_token, tag)
+
+    def test_begin_skip_csrf(self):
+        renderer = self._make_renderer()
+        tag = renderer.begin(skip_csrf=True)
+        self.assertIn('<form', tag)
+        self.assertNotIn(dummy_csrf_token, tag)
+
+    def test_form_skip_csrf(self):
+        request = DummyRequest(post={'foo': 'hello'})
+        form = Form(request, DummySchema(), skip_csrf=True)
+        form.validate(skip_csrf=True)
+        renderer = FormRenderer(form)
+        tag = renderer.begin()
+        self.assertIn('<form', tag)
+        self.assertNotIn(dummy_csrf_token, tag)
 
     def test_end(self):
         renderer = self._make_renderer()

@@ -61,10 +61,11 @@ class Form(object):
     :param method: HTTP request method that this form expects: GET or POST
     :type method: str
     """
-    def __init__(self, request, schema, method='POST'):
+    def __init__(self, request, schema, method='POST', skip_csrf=False):
         self.request = request
         self.schema = schema
         self.method = method
+        self.skip_csrf = skip_csrf
         self.dict_char = '.'
         self.list_char = '-'
         self.multipart = True
@@ -131,7 +132,7 @@ class Form(object):
 
         params = self._get_params()
 
-        if not skip_csrf:
+        if not (self.skip_csrf or skip_csrf):
             self.validate_csrf(params)
             # Remove CSRF token from params; use a copy so the original
             # request params aren't changed.
@@ -414,13 +415,16 @@ class FormRenderer(Renderer):
         Renderer.__init__(self, data=data, errors=form.errors,
                           name_prefix=name_prefix, id_prefix=id_prefix)
 
-    def begin(self, url=None, **attrs):
+    def begin(self, url=None, skip_csrf=False, **attrs):
         """
         Return a ``form`` opening tag.
         """
         url = url or self.form.request.path
         multipart = attrs.pop('multipart', self.form.multipart)
-        return tags.form(url, multipart=multipart, **attrs)
+        tag = tags.form(url, multipart=multipart, **attrs)
+        if not (self.form.skip_csrf or skip_csrf):
+            tag += self.csrf_token()
+        return tag
 
     def end(self):
         """
