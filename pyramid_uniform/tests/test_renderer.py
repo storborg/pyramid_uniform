@@ -215,3 +215,18 @@ class TestRenderer(TestCase):
         self.assertEqual(
             tag,
             '<input id="hello" name="hello" type="text" />')
+
+    def test_name_prefix(self):
+        request = DummyRequest(post={'foo': 'hello'})
+        form = Form(request, DummySchema())
+        renderer = FormRenderer(form, name_prefix='partial.')
+        tag = renderer.text('foo')
+        self.assertIn('name="partial.foo"', tag)
+
+    def test_name_prefix_id_generation(self):
+        request = DummyRequest(post={'foo': 'hello'})
+        form = Form(request, DummySchema())
+        renderer = FormRenderer(form, name_prefix='partial.')
+        tag = renderer.text('foo')
+        self.assertIn('name="partial.foo"', tag)
+        self.assertIn('id="partial.foo', tag)

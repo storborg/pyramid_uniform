@@ -225,15 +225,17 @@ class Form(object):
 
 
 class Renderer(object):
-    def __init__(self, data, errors, id_prefix=None):
+    def __init__(self, data, errors, name_prefix=None, id_prefix=None):
         self.data = data
         self.errors = errors
+        self.name_prefix = name_prefix
         self.id_prefix = id_prefix
 
     def text(self, name, value=None, id=None, **attrs):
         """
         Return a ``text`` input tag.
         """
+        name = self._get_name(name)
         return tags.text(name,
                          self.value(name, value),
                          self._get_id(id, name),
@@ -243,6 +245,7 @@ class Renderer(object):
         """
         Return a ``file`` input tag.
         """
+        name = self._get_name(name)
         return tags.file(name,
                          self.value(name, value),
                          self._get_id(id, name),
@@ -252,6 +255,7 @@ class Renderer(object):
         """
         Return a ``hidden`` input tag.
         """
+        name = self._get_name(name)
         if value is None:
             value = self.value(name)
 
@@ -264,6 +268,7 @@ class Renderer(object):
         """
         Return a radio button tag.
         """
+        name = self._get_name(name)
         checked = self.value(name) == value or checked
         return tags.radio(name, value, checked, label, **attrs)
 
@@ -271,6 +276,7 @@ class Renderer(object):
         """
         Return a submit button tag.
         """
+        name = self._get_name(name)
         return tags.submit(name,
                            self.value(name, value),
                            self._get_id(id, name),
@@ -280,6 +286,7 @@ class Renderer(object):
         """
         Return a select tag.
         """
+        name = self._get_name(name)
         val = self.value(name, selected_values)
         if not isinstance(val, list):
             val = [val]
@@ -294,6 +301,7 @@ class Renderer(object):
         """
         Return a checkbox tag.
         """
+        name = self._get_name(name)
         return tags.checkbox(name,
                              value,
                              self.value(name, checked),
@@ -305,6 +313,7 @@ class Renderer(object):
         """
         Return a textarea tag.
         """
+        name = self._get_name(name)
         return tags.textarea(name,
                              self.value(name, content),
                              self._get_id(id, name),
@@ -314,6 +323,7 @@ class Renderer(object):
         """
         Return a password input tag.
         """
+        name = self._get_name(name)
         return tags.password(name, self.value(name, value),
                              self._get_id(id, name),
                              **attrs)
@@ -322,18 +332,21 @@ class Renderer(object):
         """
         Check if the given field has any validation errors.
         """
+        name = self._get_name(name)
         return name in self.errors
 
     def errors_for(self, name):
         """
         Return a list of errors for the given field.
         """
+        name = self._get_name(name)
         return self.form.errors_for(name)
 
     def errorlist(self, name):
         """
         Return a list of errors for the given field as a ``ul`` tag.
         """
+        name = self._get_name(name)
         errors = self.errors_for(name)
 
         if not errors:
@@ -355,12 +368,19 @@ class Renderer(object):
                 id = self.id_prefix + id
         return id
 
+    def _get_name(self, name):
+        if self.name_prefix:
+            return self.name_prefix + name
+        else:
+            return name
+
 
 class FormRenderer(Renderer):
     """
     Wraps a form to provide HTML rendering capability.
     """
-    def __init__(self, form, csrf_field=csrf_field, id_prefix=None):
+    def __init__(self, form, csrf_field=csrf_field,
+                 name_prefix=None, id_prefix=None):
         self.form = form
         self.csrf_field = csrf_field
 
@@ -368,7 +388,8 @@ class FormRenderer(Renderer):
             data = form.data
         except FormNotValidated:
             data = {}
-        Renderer.__init__(self, data, form.errors, id_prefix)
+        Renderer.__init__(self, data=data, errors=form.errors,
+                          name_prefix=name_prefix, id_prefix=id_prefix)
 
     def begin(self, url=None, **attrs):
         """
