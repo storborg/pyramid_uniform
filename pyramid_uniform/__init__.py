@@ -247,7 +247,7 @@ class Form(object):
 
 
 class Renderer(object):
-    def __init__(self, data, errors, name_prefix=None, id_prefix=None):
+    def __init__(self, data, errors, name_prefix='', id_prefix=''):
         self.data = data
         self.errors = errors
         self.name_prefix = name_prefix
@@ -385,18 +385,13 @@ class Renderer(object):
 
     def _get_id(self, id, name):
         if id is None:
-            id = name
-            if self.id_prefix:
-                id = self.id_prefix + id
+            id = self.id_prefix + name
         id = id.replace('.', '_')
         id = tags._make_safe_id_component(id)
         return id
 
     def _get_name(self, name):
-        if self.name_prefix:
-            return self.name_prefix + name
-        else:
-            return name
+        return self.name_prefix + name
 
 
 class FormRenderer(Renderer):
@@ -404,7 +399,7 @@ class FormRenderer(Renderer):
     Wraps a form to provide HTML rendering capability.
     """
     def __init__(self, form, csrf_field=csrf_field,
-                 name_prefix=None, id_prefix=None):
+                 name_prefix='', id_prefix=''):
         self.form = form
         self.csrf_field = csrf_field
 
