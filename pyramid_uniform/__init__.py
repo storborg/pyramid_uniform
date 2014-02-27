@@ -5,6 +5,7 @@ import six
 from formencode import Invalid
 
 from webhelpers2.html import tags
+from webhelpers2.misc import NotGiven
 from webhelpers2.html.builder import HTML
 from pyramid.httpexceptions import HTTPBadRequest
 
@@ -253,7 +254,7 @@ class Renderer(object):
         self.name_prefix = name_prefix
         self.id_prefix = id_prefix
 
-    def text(self, name, value=None, id=None, **attrs):
+    def text(self, name, value=None, id=NotGiven, **attrs):
         """
         Return a ``text`` input tag.
         """
@@ -263,7 +264,7 @@ class Renderer(object):
                          self._get_id(id, name),
                          **attrs)
 
-    def file(self, name, value=None, id=None, **attrs):
+    def file(self, name, value=None, id=NotGiven, **attrs):
         """
         Return a ``file`` input tag.
         """
@@ -273,7 +274,7 @@ class Renderer(object):
                          self._get_id(id, name),
                          **attrs)
 
-    def hidden(self, name, value=None, id=None, **attrs):
+    def hidden(self, name, value=None, id=NotGiven, **attrs):
         """
         Return a ``hidden`` input tag.
         """
@@ -294,7 +295,7 @@ class Renderer(object):
         checked = self.value(name) == value or checked
         return tags.radio(name, value, checked, label, **attrs)
 
-    def submit(self, name=None, value=None, id=None, **attrs):
+    def submit(self, name=None, value=None, id=NotGiven, **attrs):
         """
         Return a submit button tag.
         """
@@ -304,7 +305,7 @@ class Renderer(object):
                            self._get_id(id, name),
                            **attrs)
 
-    def select(self, name, selected_values, options, id=None, **attrs):
+    def select(self, name, selected_values, options, id=NotGiven, **attrs):
         """
         Return a select tag.
         """
@@ -318,7 +319,7 @@ class Renderer(object):
                            self._get_id(id, name),
                            **attrs)
 
-    def checkbox(self, name, value="1", checked=False, label=None, id=None,
+    def checkbox(self, name, value="1", checked=False, label=None, id=NotGiven,
                  **attrs):
         """
         Return a checkbox tag.
@@ -331,7 +332,7 @@ class Renderer(object):
                              self._get_id(id, name),
                              **attrs)
 
-    def textarea(self, name, content="", id=None, **attrs):
+    def textarea(self, name, content="", id=NotGiven, **attrs):
         """
         Return a textarea tag.
         """
@@ -341,7 +342,7 @@ class Renderer(object):
                              self._get_id(id, name),
                              **attrs)
 
-    def password(self, name, value=None, id=None, **attrs):
+    def password(self, name, value=None, id=NotGiven, **attrs):
         """
         Return a password input tag.
         """
@@ -384,11 +385,12 @@ class Renderer(object):
         return self.data.get(name, default)
 
     def _get_id(self, id, name):
-        if id is None:
-            id = self.id_prefix + name
-        id = id.replace('.', '_')
-        id = tags._make_safe_id_component(id)
-        return id
+        if id:
+            if id is NotGiven:
+                id = self.id_prefix + name
+            id = id.replace('.', '_')
+            id = tags._make_safe_id_component(id)
+            return id
 
     def _get_name(self, name):
         return self.name_prefix + name

@@ -50,6 +50,12 @@ class TestRenderer(TestCase):
         self.assertIn('hello', tag)
         self.assertNotIn('somevalue', tag)
 
+    def test_text_without_id(self):
+        renderer = self._make_renderer()
+        tag = renderer.text('foo', 'somevalue', id=None)
+        self.assertEqual(tag,
+                         '<input name="foo" type="text" value="hello" />')
+
     def test_file(self):
         renderer = self._make_renderer()
         tag = renderer.file('hello')
