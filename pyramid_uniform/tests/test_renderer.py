@@ -252,3 +252,10 @@ class TestRenderer(TestCase):
         tag = renderer.text('foo')
         self.assertIn('name="partial.foo"', tag)
         self.assertIn('id="partial_foo', tag)
+
+    def test_none_name(self):
+        renderer = self._make_renderer()
+        tag = renderer.text(None, 'somevalue')
+        self.assertIn('<input', tag)
+        self.assertNotIn('name="', tag)
+        self.assertIn('somevalue', tag)

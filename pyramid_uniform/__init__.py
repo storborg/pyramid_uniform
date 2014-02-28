@@ -385,7 +385,7 @@ class Renderer(object):
         return self.data.get(name, default)
 
     def _get_id(self, id, name):
-        if id:
+        if id and name:
             if id is NotGiven:
                 id = self.id_prefix + name
             id = id.replace('.', '_')
