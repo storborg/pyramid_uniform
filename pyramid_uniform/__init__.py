@@ -393,7 +393,8 @@ class Renderer(object):
             return id
 
     def _get_name(self, name):
-        return self.name_prefix + name
+        if name:
+            return self.name_prefix + name
 
 
 class FormRenderer(Renderer):
