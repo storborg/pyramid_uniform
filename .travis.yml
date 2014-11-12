@@ -1,0 +1,17 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+
+install:
+  - "pip install coverage nose-cover3 flake8 --use-mirrors"
+  - "pip install -e . --use-mirrors"
+
+before_script: "flake8 pyramid_uniform"
+
+script:  "nosetests"
+
+after_success:
+    - coveralls
