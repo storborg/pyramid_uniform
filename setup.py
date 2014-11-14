@@ -1,4 +1,24 @@
+import sys
 from setuptools import setup, find_packages
+
+PY3 = sys.version_info[0] > 2
+
+
+requires = [
+    'Pyramid>=1.4.5',
+    'webhelpers2>=2.0b5',
+    'six>=1.5.2',
+    # These are for tests.
+    'coverage',
+    'nose>=1.1',
+    'nose-cover3',
+]
+
+# NOTE: Once FormEncode 1.3 is non-alpha, just use it for all platforms.
+if PY3:
+    requires.append('FormEncode>=1.3.0a1')
+else:
+    requires.append('FormEncode>=1.2')
 
 
 setup(name='pyramid_uniform',
@@ -19,16 +39,7 @@ setup(name='pyramid_uniform',
       url='http://github.com/cartlogic/pyramid_uniform',
       author='Scott Torborg',
       author_email='scott@cartlogic.com',
-      install_requires=[
-          'Pyramid>=1.4.5',
-          'FormEncode>=1.2',
-          'webhelpers2>=2.0b5',
-          'six>=1.5.2',
-          # These are for tests.
-          'coverage',
-          'nose>=1.1',
-          'nose-cover3',
-      ],
+      install_requires=requires,
       license='MIT',
       packages=find_packages(),
       test_suite='nose.collector',
