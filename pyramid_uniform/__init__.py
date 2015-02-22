@@ -15,6 +15,18 @@ log = logging.getLogger('pyramid_uniform.validate')
 csrf_field = "_authentication_token"
 
 
+def crud_update(obj, params):
+    for k, v in params.items():
+        if not k.startswith('_'):
+            if type(v) == list:
+                for ii, el in enumerate(v):
+                    crud_update(getattr(obj, k)[ii], el)
+            elif type(v) == dict:
+                crud_update(getattr(obj, k), v)
+            else:
+                setattr(obj, k, v)
+
+
 class FormError(Exception):
     """
     Superclass for form-related errors.
@@ -216,17 +228,6 @@ class Form(object):
             raise FormNotValidated
         if self.errors:
             raise FormInvalid('Form not valid; cannot bind')
-
-        def crud_update(obj, params):
-            for k, v in params.items():
-                if not k.startswith('_'):
-                    if type(v) == list:
-                        for ii, el in enumerate(v):
-                            crud_update(getattr(obj, k)[ii], el)
-                    elif type(v) == dict:
-                        crud_update(getattr(obj, k), v)
-                    else:
-                        setattr(obj, k, v)
 
         crud_update(obj, self.data)
         return obj
