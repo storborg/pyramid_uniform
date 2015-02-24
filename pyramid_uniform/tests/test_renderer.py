@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from pyramid.testing import DummyRequest
+from webhelpers2.html.tags import Options, Option
 
 from .. import Form, FormRenderer, csrf_field
 
@@ -90,7 +91,7 @@ class TestRenderer(TestCase):
             tag,
             '<input id="hello" name="hello" type="submit" />')
 
-    def test_select(self):
+    def test_select_deprecated(self):
         renderer = self._make_renderer()
         tag = renderer.select('hello', None, [('a', 12), ('b', 24)])
         self.assertEqual(
@@ -100,7 +101,7 @@ class TestRenderer(TestCase):
             '<option value="b">24</option>\n'
             '</select>')
 
-    def test_select_scalar_selected(self):
+    def test_select_scalar_selected_deprecated(self):
         renderer = self._make_renderer()
         tag = renderer.select('hello', 'a', [('a', 12), ('b', 24)])
         self.assertEqual(
@@ -110,7 +111,7 @@ class TestRenderer(TestCase):
             '<option value="b">24</option>\n'
             '</select>')
 
-    def test_select_multiple(self):
+    def test_select_multiple_deprecated(self):
         renderer = self._make_renderer()
         tag = renderer.select('hello', 'a', [('a', 12), ('b', 24)])
         self.assertEqual(
@@ -120,7 +121,7 @@ class TestRenderer(TestCase):
             '<option value="b">24</option>\n'
             '</select>')
 
-    def test_select_list_selected(self):
+    def test_select_list_selected_deprecated(self):
         renderer = self._make_renderer()
         tag = renderer.select('hello', ['a', 'b'], [('a', 12), ('b', 24)])
         self.assertEqual(
@@ -128,6 +129,63 @@ class TestRenderer(TestCase):
             '<select id="hello" name="hello">\n'
             '<option selected="selected" value="a">12</option>\n'
             '<option selected="selected" value="b">24</option>\n'
+            '</select>')
+
+    def test_select(self):
+        renderer = self._make_renderer()
+        tag = renderer.select('color', None, ['red', 'green', 'blue'])
+        self.assertEqual(
+            tag,
+            '<select id="color" name="color">\n'
+            '<option>red</option>\n'
+            '<option>green</option>\n'
+            '<option>blue</option>\n'
+            '</select>')
+
+    def test_select_option_class(self):
+        renderer = self._make_renderer()
+        options = Options([
+            Option('United States', 'us'),
+            Option('Canada', 'ca'),
+        ])
+        tag = renderer.select('country_code', None, options)
+        self.assertEqual(
+            tag,
+            '<select id="country_code" name="country_code">\n'
+            '<option value="us">United States</option>\n'
+            '<option value="ca">Canada</option>\n'
+            '</select>')
+
+    def test_select_scalar_selected(self):
+        renderer = self._make_renderer()
+        options = Options([
+            Option('United States', 'us'),
+            Option('Canada', 'ca'),
+        ])
+        tag = renderer.select('country_code', 'ca', options)
+        self.assertEqual(
+            tag,
+            '<select id="country_code" name="country_code">\n'
+            '<option value="us">United States</option>\n'
+            '<option selected="selected" value="ca">Canada</option>\n'
+            '</select>')
+
+    def test_select_multiple(self):
+        renderer = self._make_renderer()
+        options = Options([
+            Option('United States', 'us'),
+            Option('Canada', 'ca'),
+            Option('Italy', 'it'),
+        ])
+        tag = renderer.select('country_code', ['us', 'ca'], options,
+                              multiple=True)
+        self.assertEqual(
+            tag,
+            '<select id="country_code" multiple="multiple" '
+            'name="country_code">\n'
+            '<option selected="selected" value="us">United States</option>\n'
+            '<option selected="selected" value="ca">Canada</option>\n'
+            '<option value="it">Italy</option>\n'
             '</select>')
 
     def test_checkbox(self):

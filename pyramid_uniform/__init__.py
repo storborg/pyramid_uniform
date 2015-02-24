@@ -1,4 +1,5 @@
 import logging
+import warnings
 
 import six
 
@@ -60,6 +61,32 @@ class State(object):
     """
     def __init__(self, request):
         self.request = request
+
+
+def convert_options(options):
+    """
+    Convert a sequence type list of arguments to WebHelpers2' h.select() to the
+    new Options() class, for forwards compatibility with WebHelpers2 >= 2.0.
+    This should be temporary.
+    """
+    parsed_types = (tags.Option, tags.OptGroup)
+    seq_types = (list, tuple)
+    prepared_options = []
+    for opt in options:
+        if isinstance(opt, parsed_types):
+            prepared_options.append(opt)
+        elif isinstance(opt, seq_types):
+            warnings.warn("Passing options to select() as a sequence type is "
+                          "deprecated and will be removed in pyramid_uniform "
+                          "0.4 and later. See "
+                          "https://webhelpers2.readthedocs.org/en/latest/"
+                          "modules/html/tags.html#select-and-options-helpers"
+                          "for more information.", DeprecationWarning)
+            value, label = opt
+            prepared_options.append(tags.Option(label, value))
+        else:
+            prepared_options.append(opt)
+    return prepared_options
 
 
 class Form(object):
@@ -313,11 +340,12 @@ class Renderer(object):
         Return a select tag.
         """
         name = self._get_name(name)
-        val = self.value(name, selected_values)
-        if not isinstance(val, list):
-            val = [val]
+        selected_val = self.value(name, selected_values)
+        if not isinstance(selected_val, list):
+            selected_val = [selected_val]
+        options = convert_options(options)
         return tags.select(name,
-                           val,
+                           selected_val,
                            options,
                            self._get_id(id, name),
                            **attrs)

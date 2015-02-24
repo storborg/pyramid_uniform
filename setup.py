@@ -6,7 +6,7 @@ PY3 = sys.version_info[0] > 2
 
 requires = [
     'Pyramid>=1.4.5',
-    'webhelpers2==2.0b5',
+    'webhelpers2>=2.0',
     'six>=1.5.2',
     # These are for tests.
     'coverage',
