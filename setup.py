@@ -22,7 +22,7 @@ else:
 
 
 setup(name='pyramid_uniform',
-      version='0.3.1',
+      version='0.3.2.dev',
       description='Form handling for Pyramid.',
       long_description='',
       classifiers=[
