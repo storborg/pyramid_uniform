@@ -14,7 +14,7 @@ log = logging.getLogger('pyramid_uniform.validate')
 
 csrf_field = "_authentication_token"
 
-__version__ = '0.3.1.dev'
+__version__ = '0.3.1'
 
 
 def crud_update(obj, params):
