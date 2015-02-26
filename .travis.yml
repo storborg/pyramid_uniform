@@ -14,4 +14,4 @@ before_script: "flake8"
 script:  "nosetests"
 
 after_success:
-    - coveralls
+    - coveralls -c coverage.rc
