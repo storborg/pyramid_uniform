@@ -6,7 +6,7 @@ python:
   - "3.4"
 
 install:
-  - "pip install coverage nose-cover3 flake8 --use-mirrors"
+  - "pip install coverage nose-cov flake8 --use-mirrors"
   - "pip install -e . --use-mirrors"
   - "pip install python-coveralls"
 

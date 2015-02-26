@@ -11,7 +11,7 @@ requires = [
     # These are for tests.
     'coverage',
     'nose>=1.1',
-    'nose-cover3',
+    'nose-cov',
 ]
 
 # NOTE: Once FormEncode 1.3 is non-alpha, just use it for all platforms.
