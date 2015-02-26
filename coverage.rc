@@ -1,8 +1,7 @@
 [run]
 source = pyramid_uniform
 branch = True
-omit =
-    tests/*
+omit = pyramid_uniform/tests/*
 
 [report]
 # Regexes for lines to exclude from consideration
