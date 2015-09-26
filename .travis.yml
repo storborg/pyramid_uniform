@@ -4,10 +4,11 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+  - "3.5"
 
 install:
-  - "pip install coverage nose-cov flake8 --use-mirrors"
-  - "pip install -e . --use-mirrors"
+  - "pip install coverage nose-cov flake8"
+  - "pip install -e ."
   - "pip install python-coveralls"
 
 before_script: "flake8"
