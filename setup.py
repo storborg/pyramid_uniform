@@ -21,10 +21,15 @@ else:
     requires.append('FormEncode>=1.2')
 
 
+long_description = '''Please see
+`the documentation <http://pyramid-uniform.readthedocs.org/en/latest/>`_.
+'''
+
+
 setup(name='pyramid_uniform',
       version='0.3.3.dev',
       description='Form handling for Pyramid.',
-      long_description='',
+      long_description=long_description,
       classifiers=[
           'Development Status :: 3 - Alpha',
           'License :: OSI Approved :: MIT License',
@@ -37,9 +42,9 @@ setup(name='pyramid_uniform',
           'Framework :: Pyramid',
       ],
       keywords='pyramid forms validation rendering',
-      url='http://github.com/cartlogic/pyramid_uniform',
+      url='http://github.com/storborg/pyramid_uniform',
       author='Scott Torborg',
-      author_email='scott@cartlogic.com',
+      author_email='storborg@gmail.com',
       install_requires=requires,
       license='MIT',
       packages=find_packages(),
