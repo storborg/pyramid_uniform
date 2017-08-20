@@ -5,12 +5,8 @@ pyramid_uniform - Form handling for Pyramid
     :target: http://travis-ci.org/storborg/pyramid_uniform
 .. image:: https://coveralls.io/repos/storborg/pyramid_uniform/badge.png?branch=master
     :target: https://coveralls.io/r/storborg/pyramid_uniform
-.. image:: https://pypip.in/v/pyramid_uniform/badge.png
-    :target: https://crate.io/packages/pyramid_uniform
-.. image:: https://pypip.in/d/pyramid_uniform/badge.png
-    :target: https://crate.io/packages/pyramid_uniform
 
-Scott Torborg - `Cart Logic <http://www.cartlogic.com>`_
+Author: `Scott Torborg <https://www.scotttorborg.com>`_
 
 Form rendering and validation for Pyramid. Doesn't render HTML itself, so you
 have full control over form markup.
